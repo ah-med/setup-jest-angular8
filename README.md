@@ -1,27 +1,65 @@
-# AngularJestTest
+# Setting Up Jest for Testing In Angular 8
+This short piece will show you step-by-step how to setup Jest with angular project.
+I'll be using yarn you can replace with npm as appropriate.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.6.
+#### Remove Karma and related files
+- Remove karma and related dependencies
+    ```
+    yarn remove karma karma-chrome-launcher karma-coverage-istanbul-reporter karma-jasmine karma-jasmine-html-reporter
+    ```
+    
+- In the file `angular.json` remove the "test" part shown below cos we won't be needing it
+    ```
+        ...
+        "test": {
+            ...
+        }
+        ...
+    ```
+-  remove the files `karma.conf.js` in *root folder* and `test.ts` in *src/ folder*
 
-## Development server
+-  In the file `tsconfig.app.json` remove "src/test.ts" as that no longer exist
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+-  In the file `tsconfig.spec.json` 
+       - replace the `"jasmine"` value of "types" array with `jest` 
+       - remove the `"src/test.ts"` value of "files" array
 
-## Code scaffolding
+#### Install Jest
+- We'll add jest along with its preset for Angular applications as stated in the [ReadMe](https://github.com/thymikee/jest-preset-angular/blob/master/README.md)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+    ```
+    yarn add -D jest jest-preset-angular @types/jest
+    # or
+    npm install -D jest jest-preset-angular @types/jest
+    ```
+- Let us add jest configuration to `package.json`
 
-## Build
+    ```
+    ...
+    "jest": {
+        "preset": "jest-preset-angular",
+        "setupFilesAfterEnv": [
+          "<rootDir>/setupJest.ts"
+        ],
+        "testPathIgnorePatterns": [
+          "<rootDir>/node_modules/",
+          "<rootDir>/dist/",
+          "<rootDir>/src/test.ts"
+        ],
+        "globals": {
+          "ts-jest": {
+            "tsConfig": "<rootDir>/tsconfig.spec.json",
+            "stringifyContentPathRegex": "\\.html$",
+            "astTransformers": [
+              "<rootDir>/node_modules/jest-preset-angular/InlineHtmlStripStylesTransformer"
+            ]
+          }
+        }
+    },
+    ...
+    ```
+- Create file `setupJest.ts` in the root folder then add
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+    ```
+    import 'jest-preset-angular';
+    ```
